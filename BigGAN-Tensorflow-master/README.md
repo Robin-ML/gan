@@ -38,4 +38,4 @@ Simple Tensorflow implementation of ["Large Scale GAN Training for High Fidelity
 <img src = './assets/512.png' width = '600px'> 
 
 ## Author
-Junho Kim
+Robin Jackson
