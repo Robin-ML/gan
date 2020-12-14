@@ -1,7 +1,7 @@
 # BigGAN-Tensorflow
 Simple Tensorflow implementation of ["Large Scale GAN Training for High Fidelity Natural Image Synthesis" (BigGAN)](https://arxiv.org/abs/1809.11096)
 
-![main](./assets/main.png)
+![main](./assets/main.png) in tensorflow 1.x.
 
 ## Issue
 * **The paper** used `orthogonal initialization`, but `I used random normal initialization.` The reason is, when using the orthogonal initialization, it did not train properly.
