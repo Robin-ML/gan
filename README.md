@@ -9,6 +9,7 @@ Some versions are newer and more polished, and I generally recommend using simpl
 Some of GAN include:
 - BigGAN
 - CGAN
+- CCGAN
 - DCGAN
 - GAN with Weight Normalization and ResNet
 - WGAN

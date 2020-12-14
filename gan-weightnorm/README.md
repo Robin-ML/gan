@@ -2,9 +2,9 @@
 
 A GAN implementation based on the paper [*On the Effects of Batch and Weight Normalization in Generative Adversarial Networks*](https://arxiv.org/abs/1704.03971)
 
-One major change was adding some tweaks so that the method could work with a residual network. For this we've changed the architecture substantially, completely switched to pytorch and removed any batchnorm code, thus we decided that we should open a new repository and keep the old one for reference (which also means we will not fix the numerous bugs there).
+One major change was adding some tweaks so that the method could work with a residual network. For this I've changed the architecture substantially, completely switched to pytorch and removed any batchnorm code, thus I decided that I should open a new repository and keep the old one for reference (which also means I will not fix the numerous bugs there).
 
-We are testing on direct training on CelebA-HQ, the result of which will determine how hard we are gonna sell this paper and whether we'll even bother documenting this code. Wait for it!
+I will be testing on direct training on CelebA-HQ, the result of which will determine whether I'll even bother documenting this code. 
 
 If you want to try it now:
 
