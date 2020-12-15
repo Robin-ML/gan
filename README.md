@@ -1,6 +1,6 @@
 ![license MIT](https://img.shields.io/badge/licence-MIT-green)
 
-![main](assets/img.png)
+![main](assets/logo.png)
 ## GAN
 There are various forms of GAN implementations source code.
 
