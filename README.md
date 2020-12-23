@@ -6,11 +6,11 @@ There are various forms of GAN implementations source code.
 
 Some versions are newer and more polished, and I generally recommend using simpler implementations as a starting point if you are looking to experiment with the techniques, build upon it, or apply it to novel datasets.
 
-Some of GAN include:
+Some of GANs include:
 ## Table of Contents
   * [Installation](#installation)
   * [gan](gan)
-    + [Auxiliary Classifier GAN](#auxiliary-classifier-gan)
+    + [Auxiliary Classifier GAN](#acgan)
     + [Adversarial Autoencoder](#adversarial-autoencoder)
     + [BEGAN](#began)
     + [BicycleGAN](#bicyclegan)
