@@ -13,6 +13,7 @@ Some of GANs include:
     + [Auxiliary Classifier GAN](#acgan)
     + [Adversarial Autoencoder](#adversarial-autoencoder)
     + [BEGAN](#began)
+    + [BigGAN](#big-gan)
     + [BicycleGAN](#bicyclegan)
     + [Boundary-Seeking GAN](#boundary-seeking-gan)
     + [Cluster GAN](#cluster-gan)
