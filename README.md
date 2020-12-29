@@ -9,7 +9,7 @@ Some versions are newer and more polished, and I generally recommend using simpl
 Some of GANs include:
 ## Table of Contents
   * [Installation](#installation)
-  * [gan_variants](gan_variants)
+  * [gan_variants](#gan_variants)
     + [Auxiliary Classifier GAN](#acgan)
     + [Adversarial Autoencoder](#aae)
     + [BEGAN](#began)
@@ -22,7 +22,7 @@ Some of GANs include:
     + [Context Encoder](#context-encoder)
     + [Coupled GAN](#coupled-gan)
     + [CycleGAN](#cyclegan)
-    + [Deep Convolutional GAN](#deep-convolutional-gan)
+    + [Deep Convolutional GAN](#dcgan)
     + [DiscoGAN](#discogan)
     + [DRAGAN](#dragan)
     + [DualGAN](#dualgan)
@@ -40,8 +40,8 @@ Some of GANs include:
     + [StarGAN](#stargan)
     + [Super-Resolution GAN](#super-resolution-gan)
     + [UNIT](#unit)
-    + [Wasserstein GAN](#wasserstein-gan)
-    + [Wasserstein GAN GP](#wasserstein-gan-gp)
+    + [Wasserstein GAN](#wgan)
+    + [Wasserstein GAN GP](#wgan_gp)
     + [Wasserstein GAN DIV](#wasserstein-gan-div)
 
 ## Installation
