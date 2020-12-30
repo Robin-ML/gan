@@ -10,8 +10,8 @@ Some of GANs include:
 ## Table of Contents
   * [Installation](#installation)
   * [GAN Variants](#gan_variants)
-    + [Auxiliary Classifier GAN](#auxiliary-classifier-gan)
-    + [Adversarial Autoencoder](#adversarial-autoencoder)
+    + [Auxiliary Classifier GAN](#acgan)
+    + [Adversarial Autoencoder](#aae)
     + [BEGAN](#began)
     + [BicycleGAN](#bicyclegan)
     + [Boundary-Seeking GAN](#boundary-seeking-gan)
