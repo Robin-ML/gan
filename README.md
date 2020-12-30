@@ -9,7 +9,7 @@ Some versions are newer and more polished, and I generally recommend using simpl
 Some of GANs include:
 ## Table of Contents
   * [Installation](#installation)
-  * [GAN Variants](#gan_variants)
+  * [GAN Variants](#variants)
     + [Auxiliary Classifier GAN](#acgan)
     + [Adversarial Autoencoder](#aae)
     + [BEGAN](#began)
