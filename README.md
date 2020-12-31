@@ -9,10 +9,10 @@ Some versions are newer and more polished, and I generally recommend using simpl
 Some of GANs include:
 ## Table of Contents
   * [Installation](#installation)
-  * [GAN Variants](#variants)
-    + [Auxiliary Classifier GAN](#acgan)
-    + [Adversarial Autoencoder](#aae)
-    + [BEGAN](#began)
+  * [GAN Variants](variants)
+    + [Auxiliary Classifier GAN](acgan)
+    + [Adversarial Autoencoder](aae)
+    + [BEGAN](began)
     + [BicycleGAN](#bicyclegan)
     + [Boundary-Seeking GAN](#boundary-seeking-gan)
     + [Cluster GAN](#cluster-gan)
