@@ -44,6 +44,6 @@ Some of GANs include:
     + [Wasserstein GAN DIV](variants/wgan-div)
 
 ## Installation
-    $ git clone https://github.com/Robin-ML/GAN
+    $ git clone https://github.com/Robin-ML/gan
     $ cd gan
     $ sudo pip3 install -r requirements.txt
