@@ -15,6 +15,7 @@ import torch.nn.functional as F
 import torch
 
 
+cuda = True if torch.cuda.is_available() else False
 
 
 def weights_init_normal(m):
@@ -83,6 +84,21 @@ class Discriminator(nn.Module):
         return out, embedding
 
 
+# Reconstruction loss of AE
+pixelwise_loss = nn.MSELoss()
+
+# Initialize generator and discriminator
+generator = Generator()
+discriminator = Discriminator()
+
+if cuda:
+    generator.cuda()
+    discriminator.cuda()
+    pixelwise_loss.cuda()
+
+# Initialize weights
+generator.apply(weights_init_normal)
+discriminator.apply(weights_init_normal)
 
 
 
