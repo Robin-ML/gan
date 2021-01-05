@@ -152,3 +152,64 @@ def pullaway_loss(embeddings):
 #  Training
 # ----------
 
+# BEGAN hyper parameters
+lambda_pt = 0.1
+margin = max(1, opt.batch_size / 64.0)
+
+for epoch in range(opt.n_epochs):
+    for i, (imgs, _) in enumerate(dataloader):
+
+        # Configure input
+        real_imgs = Variable(imgs.type(Tensor))
+
+        # -----------------
+        #  Train Generator
+        # -----------------
+
+        optimizer_G.zero_grad()
+
+        # Sample noise as generator input
+        z = Variable(Tensor(np.random.normal(0, 1, (imgs.shape[0], opt.latent_dim))))
+
+        # Generate a batch of images
+        gen_imgs = generator(z)
+        recon_imgs, img_embeddings = discriminator(gen_imgs)
+
+        # Loss measures generator's ability to fool the discriminator
+        g_loss = pixelwise_loss(recon_imgs, gen_imgs.detach()) + lambda_pt * pullaway_loss(img_embeddings)
+
+        g_loss.backward()
+        optimizer_G.step()
+
+        # ---------------------
+        #  Train Discriminator
+        # ---------------------
+
+        optimizer_D.zero_grad()
+
+        # Measure discriminator's ability to classify real from generated samples
+        real_recon, _ = discriminator(real_imgs)
+        fake_recon, _ = discriminator(gen_imgs.detach())
+
+        d_loss_real = pixelwise_loss(real_recon, real_imgs)
+        d_loss_fake = pixelwise_loss(fake_recon, gen_imgs.detach())
+
+        d_loss = d_loss_real
+        if (margin - d_loss_fake.data).item() > 0:
+            d_loss += margin - d_loss_fake
+
+        d_loss.backward()
+        optimizer_D.step()
+
+        # --------------
+        # Log Progress
+        # --------------
+
+        print(
+            "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
+            % (epoch, opt.n_epochs, i, len(dataloader), d_loss.item(), g_loss.item())
+        )
+
+        batches_done = epoch * len(dataloader) + i
+        if batches_done % opt.sample_interval == 0:
+            save_image(gen_imgs.data[:25], "images/%d.png" % batches_done, nrow=5, normalize=True)
