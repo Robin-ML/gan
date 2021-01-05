@@ -139,3 +139,16 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt
 
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
+def pullaway_loss(embeddings):
+    norm = torch.sqrt(torch.sum(embeddings ** 2, -1, keepdim=True))
+    normalized_emb = embeddings / norm
+    similarity = torch.matmul(normalized_emb, normalized_emb.transpose(1, 0))
+    batch_size = embeddings.size(0)
+    loss_pt = (torch.sum(similarity) - batch_size) / (batch_size * (batch_size - 1))
+    return loss_pt
+
+
+# ----------
+#  Training
+# ----------
+
