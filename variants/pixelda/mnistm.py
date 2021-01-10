@@ -98,4 +98,68 @@ class MNISTM(data.Dataset):
                                         self.processed_folder,
                                         self.test_file))
 
-   
+    def download(self):
+        """Download the MNIST data."""
+        # import essential packages
+        from six.moves import urllib
+        import gzip
+        import pickle
+        from torchvision import datasets
+
+        # check if dataset already exists
+        if self._check_exists():
+            return
+
+        # make data dirs
+        try:
+            os.makedirs(os.path.join(self.root, self.raw_folder))
+            os.makedirs(os.path.join(self.root, self.processed_folder))
+        except OSError as e:
+            if e.errno == errno.EEXIST:
+                pass
+            else:
+                raise
+
+        # download pkl files
+        print('Downloading ' + self.url)
+        filename = self.url.rpartition('/')[2]
+        file_path = os.path.join(self.root, self.raw_folder, filename)
+        if not os.path.exists(file_path.replace('.gz', '')):
+            data = urllib.request.urlopen(self.url)
+            with open(file_path, 'wb') as f:
+                f.write(data.read())
+            with open(file_path.replace('.gz', ''), 'wb') as out_f, \
+                    gzip.GzipFile(file_path) as zip_f:
+                out_f.write(zip_f.read())
+            os.unlink(file_path)
+
+        # process and save as torch files
+        print('Processing...')
+
+        # load MNIST-M images from pkl file
+        with open(file_path.replace('.gz', ''), "rb") as f:
+            mnist_m_data = pickle.load(f, encoding='bytes')
+        mnist_m_train_data = torch.ByteTensor(mnist_m_data[b'train'])
+        mnist_m_test_data = torch.ByteTensor(mnist_m_data[b'test'])
+
+        # get MNIST labels
+        mnist_train_labels = datasets.MNIST(root=self.mnist_root,
+                                            train=True,
+                                            download=True).train_labels
+        mnist_test_labels = datasets.MNIST(root=self.mnist_root,
+                                           train=False,
+                                           download=True).test_labels
+
+        # save MNIST-M dataset
+        training_set = (mnist_m_train_data, mnist_train_labels)
+        test_set = (mnist_m_test_data, mnist_test_labels)
+        with open(os.path.join(self.root,
+                               self.processed_folder,
+                               self.training_file), 'wb') as f:
+            torch.save(training_set, f)
+        with open(os.path.join(self.root,
+                               self.processed_folder,
+                               self.test_file), 'wb') as f:
+            torch.save(test_set, f)
+
+        print('Done!')
