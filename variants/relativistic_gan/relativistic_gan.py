@@ -119,4 +119,73 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt
 
 Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
 
+# ----------
+#  Training
+# ----------
 
+for epoch in range(opt.n_epochs):
+    for i, (imgs, _) in enumerate(dataloader):
+
+        # Adversarial ground truths
+        valid = Variable(Tensor(imgs.shape[0], 1).fill_(1.0), requires_grad=False)
+        fake = Variable(Tensor(imgs.shape[0], 1).fill_(0.0), requires_grad=False)
+
+        # Configure input
+        real_imgs = Variable(imgs.type(Tensor))
+
+        # -----------------
+        #  Train Generator
+        # -----------------
+
+        optimizer_G.zero_grad()
+
+        # Sample noise as generator input
+        z = Variable(Tensor(np.random.normal(0, 1, (imgs.shape[0], opt.latent_dim))))
+
+        # Generate a batch of images
+        gen_imgs = generator(z)
+
+        real_pred = discriminator(real_imgs).detach()
+        fake_pred = discriminator(gen_imgs)
+
+        if opt.rel_avg_gan:
+            g_loss = adversarial_loss(fake_pred - real_pred.mean(0, keepdim=True), valid)
+        else:
+            g_loss = adversarial_loss(fake_pred - real_pred, valid)
+
+        # Loss measures generator's ability to fool the discriminator
+        g_loss = adversarial_loss(discriminator(gen_imgs), valid)
+
+        g_loss.backward()
+        optimizer_G.step()
+
+        # ---------------------
+        #  Train Discriminator
+        # ---------------------
+
+        optimizer_D.zero_grad()
+
+        # Predict validity
+        real_pred = discriminator(real_imgs)
+        fake_pred = discriminator(gen_imgs.detach())
+
+        if opt.rel_avg_gan:
+            real_loss = adversarial_loss(real_pred - fake_pred.mean(0, keepdim=True), valid)
+            fake_loss = adversarial_loss(fake_pred - real_pred.mean(0, keepdim=True), fake)
+        else:
+            real_loss = adversarial_loss(real_pred - fake_pred, valid)
+            fake_loss = adversarial_loss(fake_pred - real_pred, fake)
+
+        d_loss = (real_loss + fake_loss) / 2
+
+        d_loss.backward()
+        optimizer_D.step()
+
+        print(
+            "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
+            % (epoch, opt.n_epochs, i, len(dataloader), d_loss.item(), g_loss.item())
+        )
+
+        batches_done = epoch * len(dataloader) + i
+        if batches_done % opt.sample_interval == 0:
+            save_image(gen_imgs.data[:25], "images/%d.png" % batches_done, nrow=5, normalize=True)
