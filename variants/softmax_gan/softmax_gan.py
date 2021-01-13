@@ -118,3 +118,51 @@ def log(x):
     return torch.log(x + 1e-8)
 
 
+# ----------
+#  Training
+# ----------
+
+for epoch in range(opt.n_epochs):
+    for i, (imgs, _) in enumerate(dataloader):
+
+        optimizer_G.zero_grad()
+        optimizer_D.zero_grad()
+
+        batch_size = imgs.shape[0]
+
+        # Adversarial ground truths
+        g_target = 1 / (batch_size * 2)
+        d_target = 1 / batch_size
+
+        # Configure input
+        real_imgs = Variable(imgs.type(Tensor))
+
+        # Sample noise as generator input
+        z = Variable(Tensor(np.random.normal(0, 1, (imgs.shape[0], opt.latent_dim))))
+        # Generate a batch of images
+        gen_imgs = generator(z)
+
+        d_real = discriminator(real_imgs)
+        d_fake = discriminator(gen_imgs)
+
+        # Partition function
+        Z = torch.sum(torch.exp(-d_real)) + torch.sum(torch.exp(-d_fake))
+
+        # Calculate loss of discriminator and update
+        d_loss = d_target * torch.sum(d_real) + log(Z)
+        d_loss.backward(retain_graph=True)
+        optimizer_D.step()
+
+        # Calculate loss of generator and update
+        g_loss = g_target * (torch.sum(d_real) + torch.sum(d_fake)) + log(Z)
+        g_loss.backward()
+        optimizer_G.step()
+
+        print(
+            "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
+            % (epoch, opt.n_epochs, i, len(dataloader), d_loss.item(), g_loss.item())
+        )
+
+        batches_done = epoch * len(dataloader) + i
+        if batches_done % opt.sample_interval == 0:
+            save_image(gen_imgs.data[:25], "images/%d.png" % batches_done, nrow=5, normalize=True)
