@@ -90,4 +90,79 @@ dataloader = DataLoader(
     num_workers=opt.n_cpu,
 )
 
+# ----------
+#  Training
+# ----------
 
+for epoch in range(opt.epoch, opt.n_epochs):
+    for i, imgs in enumerate(dataloader):
+
+        # Configure model input
+        imgs_lr = Variable(imgs["lr"].type(Tensor))
+        imgs_hr = Variable(imgs["hr"].type(Tensor))
+
+        # Adversarial ground truths
+        valid = Variable(Tensor(np.ones((imgs_lr.size(0), *discriminator.output_shape))), requires_grad=False)
+        fake = Variable(Tensor(np.zeros((imgs_lr.size(0), *discriminator.output_shape))), requires_grad=False)
+
+        # ------------------
+        #  Train Generators
+        # ------------------
+
+        optimizer_G.zero_grad()
+
+        # Generate a high resolution image from low resolution input
+        gen_hr = generator(imgs_lr)
+
+        # Adversarial loss
+        loss_GAN = criterion_GAN(discriminator(gen_hr), valid)
+
+        # Content loss
+        gen_features = feature_extractor(gen_hr)
+        real_features = feature_extractor(imgs_hr)
+        loss_content = criterion_content(gen_features, real_features.detach())
+
+        # Total loss
+        loss_G = loss_content + 1e-3 * loss_GAN
+
+        loss_G.backward()
+        optimizer_G.step()
+
+        # ---------------------
+        #  Train Discriminator
+        # ---------------------
+
+        optimizer_D.zero_grad()
+
+        # Loss of real and fake images
+        loss_real = criterion_GAN(discriminator(imgs_hr), valid)
+        loss_fake = criterion_GAN(discriminator(gen_hr.detach()), fake)
+
+        # Total loss
+        loss_D = (loss_real + loss_fake) / 2
+
+        loss_D.backward()
+        optimizer_D.step()
+
+        # --------------
+        #  Log Progress
+        # --------------
+
+        sys.stdout.write(
+            "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
+            % (epoch, opt.n_epochs, i, len(dataloader), loss_D.item(), loss_G.item())
+        )
+
+        batches_done = epoch * len(dataloader) + i
+        if batches_done % opt.sample_interval == 0:
+            # Save image grid with upsampled inputs and SRGAN outputs
+            imgs_lr = nn.functional.interpolate(imgs_lr, scale_factor=4)
+            gen_hr = make_grid(gen_hr, nrow=1, normalize=True)
+            imgs_lr = make_grid(imgs_lr, nrow=1, normalize=True)
+            img_grid = torch.cat((imgs_lr, gen_hr), -1)
+            save_image(img_grid, "images/%d.png" % batches_done, normalize=False)
+
+    if opt.checkpoint_interval != -1 and epoch % opt.checkpoint_interval == 0:
+        # Save model checkpoints
+        torch.save(generator.state_dict(), "saved_models/generator_%d.pth" % epoch)
+        torch.save(discriminator.state_dict(), "saved_models/discriminator_%d.pth" % epoch)
